@@ -1,0 +1,17 @@
+1.)  Yes, fractional part plays a role in defining precision of floating point number 
+where the precision is the total number of digits in significand. 
+The Mantissa(or significand) is composed of an implicit leading bit (left of the radix point and not stored) 
+and the fraction bits (to the right of the radix point). For example, the decimal number 601 can be represented as any of these:
+0.601 × 103           6.01 × 102             60.1 × 101   ……      
+In order to maximize the quantity of representable numbers, it is stored in normalized form, 
+where the radix point is placed after the first non-zero digit(for binary it is 1). 
+In normalized form, 601 is represented as 6.01 × 102 . So, the precision is 3.
+Considering another example, 1.00001 * 23 , where precision is 6.
+
+
+2.)  As per IEEE 754 standards, a normal number is a finite nonzero floating-point number
+with magnitude greater than or equal to a minimum value  b^emin 
+where here, b is the radix and emin is the minimum exponent. Normal numbers can use the full precision available in a format.
+
+And, when all the exponent bits are 0 and the leading hidden bit of the significand is 0, 
+then the floating point number is called a subnormal number or non-zero floating-point numbers having magnitude less than b^emin .
