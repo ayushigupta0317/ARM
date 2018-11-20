@@ -1,105 +1,117 @@
-    AREA	appcode, CODE, READONLY
-		IMPORT printMsg
-		export __main
-		ENTRY
-__main  function
-		;for LOGIC_NOT following are the valid combination of input as can be seen in python code
-		;X0->1, X1->0, X2->0
-		;X0->1, X1->1, X2->0
-		VLDR.F32 S29,=1 ;X0
-		VLDR.F32 S30,=1	;X1
-		VLDR.F32 S31,=0	;X2
-		ADR.W  R6, BranchTable_Byte
-		MOV R7,#0 ; to select one option in switch case (gates)
-		;0->LOGIC_AND
-		;1->LOGIC_OR
-		;2->LOGIC_NOT
-		;3->LOGIC_NAND
-		;4->LOGIC_NOR
-		;5->LOGIC_XOR
-		;6->LOGIC_XNOR
-		TBB   [R6, R7] ; switch case equivalent in Arm cortex M4
-		;S0 = W0,S1 = W1, S2 = W2, S3 = (Bias)
-LOGIC_AND	VLDR.F32 S0,=-0.1
-			VLDR.F32 S1,=0.2
-			VLDR.F32 S2,=0.2
-			VLDR.F32 S3,=-0.2
-			B EXP_X_CALCULATION
-LOGIC_OR	VLDR.F32 S0,=-0.1
-			VLDR.F32 S1,=0.7
-			VLDR.F32 S2,=0.7
-			VLDR.F32 S3,=-0.1
-			B EXP_X_CALCULATION
-LOGIC_NOT	VLDR.F32 S0,=0.5
-			VLDR.F32 S1,=-0.7
-			VLDR.F32 S2,=0
-			VLDR.F32 S3,=0.1
-			B EXP_X_CALCULATION
-LOGIC_NAND	VLDR.F32 S0,=0.6
-			VLDR.F32 S1,=-0.8
-			VLDR.F32 S2,=-0.8
-			VLDR.F32 S3,=0.3
-			B EXP_X_CALCULATION
-LOGIC_NOR	VLDR.F32 S0,=0.5
-			VLDR.F32 S1,=-0.7
-			VLDR.F32 S2,=-0.7
-			VLDR.F32 S3,=0.1
-			B EXP_X_CALCULATION
-LOGIC_XOR	VLDR.F32 S0,=-5
-			VLDR.F32 S1,=20
-			VLDR.F32 S2,=10
-			VLDR.F32 S3,=1
-			B EXP_X_CALCULATION
-LOGIC_XNOR	VLDR.F32 S0,=-5
-			VLDR.F32 S1,=20
-			VLDR.F32 S2,=10
-			VLDR.F32 S3,=1
-			B EXP_X_CALCULATION
-;S28 will store the final X0*W0 + X1*W1 + X2*W2 + Bias
-EXP_X_CALCULATION	VMLA.F32 S28, S0, S29
-					VMLA.F32 S28, S1, S30
-					VMLA.F32 S28, S2, S31
-					VADD.F32 S28, S28, S3
-					B EXPROUTINE
+         area     appcode, CODE, READONLY
+	 IMPORT printMsg             
+	 export __main	
+	 ENTRY 
+__main    FUNCTION             
+			VLDR.F32 S6,=1   ;X0 FIRST INPUT
+			VLDR.F32 S7,=1	 ;X1 SECOND INPUT
+			VLDR.F32 S8,=0	 ;X2 THIRD INPUT
+			ADR.W  R3, BranchTable
+			MOV R4, #0        ;to select one option in switch case (gates)
+			TBB  [R3, R4]   ;switch case equivalent in Arm cortex M4
+			
+			;0->LOGIC_AND
+			;1->LOGIC_OR
+			;2->LOGIC_NOT
+			;3->LOGIC_NAND
+			;4->LOGIC_NOR
+			;5->LOGIC_XOR
+			;6->LOGIC_XNOR
+			
+			;S9 = W0, S10 = W1, S11 = W2, S12 = BIAS
+			
+LOGIC_AND	        VLDR.F32 S9,=-0.1
+			VLDR.F32 S10,=0.2
+			VLDR.F32 S11,=0.2
+			VLDR.F32 S12,=-0.2
+			B EXPCALCULATE
+			
+LOGIC_OR	        VLDR.F32 S9,=-0.1
+			VLDR.F32 S10,=0.7
+			VLDR.F32 S11,=0.7
+			VLDR.F32 S12,=-0.1
+			B EXPCALCULATE
+			
+LOGIC_NOT	        VLDR.F32 S9,=0.5
+			VLDR.F32 S10,=-0.7
+			VLDR.F32 S11,=0
+			VLDR.F32 S12,=0.1
+			B EXPCALCULATE
+			
+LOGIC_NAND	        VLDR.F32 S9,=0.6
+			VLDR.F32 S10,=-0.8
+			VLDR.F32 S11,=-0.8
+			VLDR.F32 S12,=0.3
+			B EXPCALCULATE
+	
+LOGIC_NOR	        VLDR.F32 S9,=0.5
+			VLDR.F32 S10,=-0.7
+			VLDR.F32 S11,=-0.7
+			VLDR.F32 S12,=0.1
+			B EXPCALCULATE
+			
+LOGIC_XOR	        VLDR.F32 S9,=-5
+			VLDR.F32 S10,=20
+			VLDR.F32 S11,=10
+			VLDR.F32 S12,=1
+			B EXPCALCULATE
+			
+LOGIC_XNOR	        VLDR.F32 S9,=-5
+			VLDR.F32 S10,=20
+			VLDR.F32 S11,=10
+			VLDR.F32 S12,=1
+			B EXPCALCULATE
+			
+;CALCULATING X= X0*W0 + X1*W1 + X2*W2 + BIAS
+
+EXPCALCULATE                    VMLA.F32 S13, S6, S9
+				VMLA.F32 S13, S7, S10
+				VMLA.F32 S13, S8, S11
+				VADD.F32 S13, S13, S12
+				B EXPONENTIAL	                  ;LOOP TO CALCULATE e^x
+				
 ;offset calculation for switch case
-BranchTable_Byte	DCB    0
-					DCB    ((LOGIC_OR-LOGIC_AND)/2)
-					DCB    ((LOGIC_NOT-LOGIC_AND)/2)
-					DCB    ((LOGIC_NAND-LOGIC_AND)/2)
-					DCB    ((LOGIC_NOR-LOGIC_AND)/2)
-					DCB    ((LOGIC_XOR-LOGIC_AND)/2)
-					DCB    ((LOGIC_XNOR-LOGIC_AND)/2)
-;this program performs e^x,the result will be stored in S2
-EXPROUTINE	VMOV.F32 S2, #1 ; Sum Variable
-			VMOV.F32 S6, #25 ; 'n' variable - sequence size
-			;VMOV.F32 S1, #5 ; 'x' varaiable - in e^x
-			VMOV.F32 S3, #1 ; constant
-loop		VCMP.F32 S6, #0
-			VMRS.F32 APSR_nzcv,FPSCR ; Transfer floating-point flags to the APSR flags
-			BEQ SIGROUTINE
-			VDIV.F32 S4, S2, S6 ; sum/i
-			;VMUL.F32 S5, S1, S4 ; x*sum/i
-			VMUL.F32 S5, S28, S4 ; x*sum/i
-			VADD.F32 S2, S3, S5 ; sum = 1 + (x * (sum/i))
-			VSUB.F32 S6, S6, S3
-			B loop
-SIGROUTINE	VDIV.F32 S2, S3, S2 ; 1/e^x
-			VADD.F32 S2, S3, S2 ; 1 + 1/e^x
-			VDIV.F32 S2, S3, S2 ; 1/(1 + 1/e^x)
-			B OUTPUT
-;SIGROUTINE
-			;VMOV.F32 S7, S2 ; e^x to S7
-			;VADD.F32 S8, S3, S7 ; 1 + e^x to S8
-			;VDIV.F32 S9, S7, S8
-			;B OUTPUT
-; S15 will hold 0.5 for comparison to finalise the logical output for a particular gate
-OUTPUT	VLDR.F32 S15 ,=0.5
-		VCMP.F32 S2, S15 ; compare the output of sigmoid routine with S15
-		VMRS.F32 APSR_nzcv,FPSCR ; Transfer floating-point flags to the APSR flags
-		ITE HI
-		MOVHI R0,#1; if S2 > S15
-		MOVLS R0,#0; if S2 < S15
-		BL printMsg	 ; Refer to ARM Procedure calling standards.
-stop 	B  stop ; stop program
-		endfunc
-		end
+
+BranchTable		        DCB    0
+				DCB    ((LOGIC_OR-LOGIC_AND)/2)
+				DCB    ((LOGIC_NOT-LOGIC_AND)/2)
+				DCB    ((LOGIC_NAND-LOGIC_AND)/2)
+				DCB    ((LOGIC_NOR-LOGIC_AND)/2)
+				DCB    ((LOGIC_XOR-LOGIC_AND)/2)
+				DCB    ((LOGIC_XNOR-LOGIC_AND)/2)
+
+				
+EXPONENTIAL  	                VLDR.F32 S0,=5                    ;holding x  
+				VLDR.F32 S1,=1                    ;holding intermediate series elements h
+				VLDR.F32 S2,=1                    ;holding final value
+				MOV R2,#1                         ;counter variable i 
+				MOV R1,#5                         ;no. of terms of the series n
+LOOP1                           CMP R2, R1                        ;Compare 'i' and 'n'  
+				BLE LOOP2                         ;if i < n goto LOOP2 
+				B SIGMOID_loop                    ;else goto sigmoid function 
+LOOP2                           VMOV.F32 S3, R2                    
+				VCVT.F32.U32 S3, S3               ;Converting the bitstream into unsigned 32 bit fp no. 
+				VMUL.F32 S1, S1, S0               ;h = h*x 
+				VDIV.F32 S1, S1, S3               ;Dividing h by 'i' & store it back in 'h' 
+				VADD.F32 S2, S2, S1               ;adding previous result to 'h'  
+				ADD R2, R2, #1                    ;Incrementing counter 
+				B LOOP1 
+				
+SIGMOID_loop                    VLDR.F32 S4,=1                    ;constant 1
+				VDIV.F32 S2, S4, S2               ;1/e^x
+				VADD.F32 S2, S4, S2               ;1/e^x + 1
+				VDIV.F32 S2, S4, S2               ;1/(1/e^x + 1)
+				B RESULT
+				
+RESULT	                VLDR.F32 S5 ,=0.5
+		        VCMP.F32 S2, S5                   ;compare the output of sigmoid routine with S5
+		        VMRS.F32 APSR_nzcv,FPSCR          ;Transfer floating-point flags to the APSR flags
+		        ITE HI
+		        MOVHI R0,#1                       ;if S2 > S5
+		        MOVLS R0,#0                       ;if S2 < S5
+		        BL printMsg
+				
+Stop            B Stop 
+           ENDFUNC 
+        END
+			
