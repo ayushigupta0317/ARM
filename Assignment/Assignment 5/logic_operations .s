@@ -81,7 +81,7 @@ BranchTable		        DCB    0
 				DCB    ((LOGIC_XNOR-LOGIC_AND)/2)
 
 				
-EXPONENTIAL  	                VLDR.F32 S0,=5                    ;holding x  
+EXPONENTIAL  	                ;VLDR.F32 S0,=5                   ;holding x  
 				VLDR.F32 S1,=1                    ;holding intermediate series elements h
 				VLDR.F32 S2,=1                    ;holding final value
 				MOV R2,#1                         ;counter variable i 
@@ -91,7 +91,7 @@ LOOP1                           CMP R2, R1                        ;Compare 'i' a
 				B SIGMOID_loop                    ;else goto sigmoid function 
 LOOP2                           VMOV.F32 S3, R2                    
 				VCVT.F32.U32 S3, S3               ;Converting the bitstream into unsigned 32 bit fp no. 
-				VMUL.F32 S1, S1, S0               ;h = h*x 
+				VMUL.F32 S1, S1, S13               ;h = h*x 
 				VDIV.F32 S1, S1, S3               ;Dividing h by 'i' & store it back in 'h' 
 				VADD.F32 S2, S2, S1               ;adding previous result to 'h'  
 				ADD R2, R2, #1                    ;Incrementing counter 
