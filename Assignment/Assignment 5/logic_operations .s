@@ -81,8 +81,8 @@ BranchTable		        DCB    0
 				DCB    ((LOGIC_XNOR-LOGIC_AND)/2)
 
 				
-EXPONENTIAL  	                ;VLDR.F32 S0,=5                   ;holding x  
-				VLDR.F32 S1,=1                    ;holding intermediate series elements h
+              	                ;VLDR.F32 S0,=5                   ;holding x  
+EXPONENTIAL			VLDR.F32 S1,=1                    ;holding intermediate series elements h
 				VLDR.F32 S2,=1                    ;holding final value
 				MOV R2,#1                         ;counter variable i 
 				MOV R1,#5                         ;no. of terms of the series n
